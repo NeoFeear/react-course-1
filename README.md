@@ -1,7 +1,5 @@
-<p align="center">
-    <h1>React course 1</h1>
-    <h2>De Florian Martin</h2>
-</p>
+<h1 align="center">React course 1</h1>
+<h2 align="center">De Florian Martin</h2>
 
 ## Getting started
 - Fork project to your personal repo
