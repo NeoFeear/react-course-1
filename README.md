@@ -1,7 +1,7 @@
 # React course 1
+## De Florian Martin
 
-## Getting started
-
+### Getting started
 - Fork project to your personal repo
 - Edit README.md with your name/surname
 - Open terminal
@@ -13,8 +13,7 @@ yarn
 yarn start
 ```
 
-## Goals
-
+### Goals
 You have to create a todo list with these features:
 - Create new todo with title / description / priority / assigned to
 - Manage status (completed or not)
