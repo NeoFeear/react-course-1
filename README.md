@@ -15,12 +15,11 @@ yarn start
 
 ## Goals
 You have to create a todo list with these features:
-- [] Create new todo with title / description / priority / assigned to
-- [] Manage status (completed or not)
-- [] Create new list
+- [X] Create new todo with title / description / priority / assigned to
+- [X] Create new list
 - [] Add filters
 - [] Edit todo
-- [] Move todo
-- [] Drag and drop todo (using [beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd))
+- [] Move todo (Bouton déplacer vers)
+- [X] Drag and drop todo (using [beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd))
 - [] List virtualization (using [react-window](https://github.com/bvaughn/react-window))
-- [] Use React context
+- [] Use React context (Redux)
