@@ -1,12 +1,6 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: rgb(39, 39, 39);
-  color: white;
+  background: rgb(163, 163, 163) !important;
+  color: white !important;
 }
 
 .App {
@@ -23,7 +17,7 @@ body {
   align-items: center;
 }
 
-#btnAddItem {
+.btnAdd {
   display: flex;
   justify-content: center;
   align-items: center;
