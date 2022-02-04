@@ -1,9 +1,10 @@
-import { BiEdit, BiTrash } from "react-icons/bi"
-import { Button, Card } from 'react-bootstrap';
+import { BiEdit, BiTrash } from "react-icons/bi";
+import { Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface CardElement {
     id: string;
+    filter: string;
     name: string;
 }
 
@@ -19,6 +20,8 @@ const Cards = ({el, editItem, removeItem, moveTo}: CardInterface) => {
         <Card className="text-center">
             <Card.Body>
                 <Card.Title>{el.name}</Card.Title>
+
+                <Card.Subtitle className="filter mb-2 text-muted">{el.filter}</Card.Subtitle>
 
                 <div className="d-flex justify-content-around">
                     <button className="btn btn-primary" onClick={()=> editItem(el.id, el.name)}>
