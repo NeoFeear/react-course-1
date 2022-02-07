@@ -132,13 +132,17 @@ function App() {
     }
 
     const removeTask = (id: string) => {
-        const newColumn = { ...column };
-        const newTodoTasks = newColumn['todo'].tasks.filter((task: any) => task.id !== id);
-        newColumn['todo'].tasks = newTodoTasks;
-        setColumn(newColumn);
+        const newColumn: Record<string, any> = { ...column };
+        for (const key in newColumn) {
+            for (const task of newColumn[key].tasks) {
+                if (task.id === id) {
+                    newColumn[key].tasks.splice(newColumn[key].tasks.indexOf(task), 1);
+                }
+            }
+        }
+        // TODO : RÉSOUDRE -> setColumn(newColumn);
     }
 
-    // TODO: Move task to the selected column
     const moveTo = (id: string): void => {
         Swal.fire({
             title: 'Move task to',
@@ -149,11 +153,16 @@ function App() {
         })
         .then((result: any) => {
             if (result.value) {
-                /* const newColumn = { ...column };
-                const newTodoTasks = newColumn['todo'].tasks.filter((task: any) => task.id !== id);
-                newColumn['todo'].tasks = newTodoTasks;
-                newColumn[result.value].tasks.push(newColumn['todo'].tasks.find((task: any) => task.id === id));
-                setColumn(newColumn); */
+                const newColumn: Record<string, any> = { ...column };
+                for (const key in newColumn) {
+                    for (const task of newColumn[key].tasks) {
+                        if (task.id === id) {
+                            newColumn[result.value].tasks.push(task);
+                            newColumn[key].tasks.splice(newColumn[key].tasks.indexOf(task), 1);
+                        }
+                    }
+                }
+                // TODO : RÉSOUDRE -> setColumn(newColumn);
             }
         })
     }
