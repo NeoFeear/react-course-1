@@ -8,7 +8,7 @@ You have to create a todo list with these features:
 - [X] Remove todo
 - [X] Create new list
 - [] Add filters
-- [] Move todo (Bouton déplacer vers)
+- [~] Move todo (Bouton déplacer vers)
 - [X] Drag and drop todo (using [beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd))
 
 Optionals:

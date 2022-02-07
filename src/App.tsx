@@ -1,39 +1,56 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import _, { filter } from 'lodash';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import _ from 'lodash';
 import { v4 } from 'uuid';
 import Swal from 'sweetalert2';
 
-import Cards from './components/Cards';
-
-const tasks: any[] = [
-    { id: v4(), name: 'Acheter des Asics Koï pour avoir une meilleure note' },
-    { id: v4(), name: 'Learn React' },
-    { id: v4(), name: 'Learn TypeScript' },
-    { id: v4(), name: 'Learn PHP' },
-];
+import Columns from './components/Columns';
 
 function App() {
+    // ===================== INTERFACES =====================
+    interface Task {
+        id: string;
+        name: string;
+    }
+    interface Column {
+        id: number;
+        title: string;
+        tasks: Task[];
+    }
+    interface ColumnState {
+        [k: string]: Column;
+    }
+
+    // ===================== TASKS =====================
+    const tasks: Task[] = [
+        { id: v4(), name: 'Acheter des Asics Koï pour avoir une meilleure note' },
+        { id: v4(), name: 'Learn React' },
+        { id: v4(), name: 'Learn TypeScript' },
+        { id: v4(), name: 'Learn PHP' },
+    ];
+
+    // ===================== STATES =====================
     const [text, setText] = useState('');
-    const [column, setColumn] = useState({
-        "todo": {
-            id: "todo",
+    const [column, setColumn] = useState<ColumnState>({
+        todo: {
+            id: 0,
             title: "To Do",
             tasks: [tasks[0]]
         },
-        "inProgress": {
-            id: "inProgress",
+        inProgress: {
+            id: 1,
             title: "In Progress",
             tasks: [tasks[1], tasks[2]]
         },
-        "done": {
-            id: "done",
+        done: {
+            id: 2,
             title: "Done",
             tasks: [tasks[3]]
         }
     });
 
+    // ===================== FUNCTIONS =====================
     const reorder = (list: any[], startIndex: number, endIndex: number) => {
         const result = Array.from(list);
         const [removed] = result.splice(startIndex, 1);
@@ -41,7 +58,7 @@ function App() {
         return result;
     }
 
-    const handleDragEnd = ({ destination, source }: any) => {
+    const handleDragEnd = ({ source, destination }: any) => {
         console.log({ destination, source, column });
 
         const sourceId = source.droppableId;
@@ -83,6 +100,7 @@ function App() {
                 setColumn({
                     ...column,
                     [result.value]: {
+                        id: column[Object.keys(column)[Object.keys(column).length - 1]].id + 1,
                         title: result.value,
                         tasks: []
                     }
@@ -102,7 +120,9 @@ function App() {
             if (result.value) {
                 const newTask = { id: v4(), name: result.value };
                 const newColumn = { ...column };
+
                 newColumn['todo'].tasks.push(newTask);
+
                 setColumn(newColumn);
                 setText('');
             }
@@ -118,31 +138,36 @@ function App() {
             showCancelButton: true,
         }).then((result: any) => {
             if (result.value) {
-                const newColumn: Record<string, any> = { ...column };
+                const newColumn: ColumnState = { ...column };
+
                 for (const key in newColumn) {
-                    for (const task of newColumn[key].tasks) {
+                    for (const task of newColumn[key as keyof ColumnState].tasks) {
                         if (task.id === id) {
                             task.name = result.value;
                         }
                     }
                 }
-                // TODO : RÉSOUDRE -> setColumn(newColumn);
+                setColumn(newColumn);
             }
         })
     }
 
     const removeTask = (id: string) => {
-        const newColumn: Record<string, any> = { ...column };
+        const newColumn: ColumnState = { ...column };
         for (const key in newColumn) {
-            for (const task of newColumn[key].tasks) {
+            for (const task of newColumn[key as keyof ColumnState].tasks) {
                 if (task.id === id) {
-                    newColumn[key].tasks.splice(newColumn[key].tasks.indexOf(task), 1);
+                    newColumn[key as keyof ColumnState].tasks.splice(
+                        newColumn[key as keyof ColumnState].tasks.indexOf(task),
+                        1
+                    );
                 }
             }
         }
-        // TODO : RÉSOUDRE -> setColumn(newColumn);
-    }
+        setColumn(newColumn);
+    };
 
+    // TODO
     const moveTo = (id: string): void => {
         Swal.fire({
             title: 'Move task to',
@@ -153,18 +178,30 @@ function App() {
         })
         .then((result: any) => {
             if (result.value) {
-                const newColumn: Record<string, any> = { ...column };
+                const newColumn: ColumnState = { ...column };
                 for (const key in newColumn) {
-                    for (const task of newColumn[key].tasks) {
+                    for (const task of newColumn[key as keyof ColumnState].tasks) {
                         if (task.id === id) {
-                            newColumn[result.value].tasks.push(task);
-                            newColumn[key].tasks.splice(newColumn[key].tasks.indexOf(task), 1);
+                            /**
+                             * TODO : déplacer dans la bonne colonne
+                             * newColumn[result.value as keyof ColumnState].tasks.push(task);
+                             */
+
+                            newColumn[key as keyof ColumnState].tasks.splice(
+                                newColumn[key as keyof ColumnState].tasks.indexOf(task),
+                                1
+                            );
                         }
                     }
                 }
-                // TODO : RÉSOUDRE -> setColumn(newColumn);
+                setColumn(newColumn);
             }
         })
+    }
+
+    // TODO
+    const selectFilter = (filter: string) => {
+        console.log("Afficher seulement les tâches de la colonne : ", filter);
     }
 
     return (
@@ -182,9 +219,11 @@ function App() {
             <div>
                 <div className="boutons btnFilter">
                     <h3 className='text-decoration-underline text-black'>Filtre :</h3>
-                    <select className="form-select" onChange={(e: any) => setColumn(e.target.value)}>
-                        <option value="">Tous</option>
-                        {/* TODO */}
+                    <select className="form-select" onChange={(e: any) => selectFilter(e.target.value)}>
+                        <option value="all">Tous</option>
+                        <option value="todo">Todo</option>
+                        <option value="inProgress">En cours</option>
+                        <option value="done">Terminé</option>
                     </select>
                 </div>
             </div>
@@ -201,22 +240,13 @@ function App() {
                                     {(provided) => {
                                         return (
                                             <div ref={provided.innerRef}{...provided.droppableProps} className={"droppable-col"}>
-                                                {data.tasks.map((el: any, index: number) => {
-                                                    return (
-                                                        <Draggable key={el.id} index={index} draggableId={el.id}>
-                                                            {(provided) => {
-                                                                return (
-                                                                    <div ref={provided.innerRef}{...provided.draggableProps} className={"task"}>
-                                                                        <span {...provided.dragHandleProps} className={"drag-handle"}>
-                                                                            <Cards el={el} editTask={editTask} removeTask={removeTask} moveTo={moveTo} />
-                                                                        </span>
-                                                                    </div>
-                                                                )
-                                                            }}
-                                                        </Draggable>
-                                                    )
-                                                })}
-                                                {provided.placeholder}
+                                                <Columns 
+                                                    key={key}
+                                                    data={data}
+                                                    editTask={editTask}
+                                                    removeTask={removeTask}
+                                                    moveTo={moveTo}
+                                                />
                                             </div>
                                         )
                                     }}
