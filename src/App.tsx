@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import Columns from './components/Columns';
 
 function App() {
-    // ===================== INTERFACES =====================
+// ===================== INTERFACES =====================
     interface Task {
         id: string;
         name: string;
@@ -22,7 +22,7 @@ function App() {
         [k: string]: Column;
     }
 
-    // ===================== TASKS =====================
+// ===================== TASKS =====================
     const tasks: Task[] = [
         { id: v4(), name: 'Acheter des Asics Koï pour avoir une meilleure note' },
         { id: v4(), name: 'Learn React' },
@@ -50,7 +50,7 @@ function App() {
         }
     });
 
-    // ===================== FUNCTIONS =====================
+// ===================== FUNCTIONS =====================
     const reorder = (list: any[], startIndex: number, endIndex: number) => {
         const result = Array.from(list);
         const [removed] = result.splice(startIndex, 1);
@@ -204,6 +204,7 @@ function App() {
         console.log("Afficher seulement les tâches de la colonne : ", filter);
     }
 
+// ===================== RENDER =====================
     return (
         <div className="App">
 
