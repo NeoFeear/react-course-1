@@ -7,59 +7,46 @@ import Swal from 'sweetalert2';
 
 import Cards from './components/Cards';
 
-const item: any = [
-    {
-        id: v4(),
-        filter: 'learn',
-        name: 'Learn React'
-    },
-    {
-        id: v4(),
-        filter: 'learn',
-        name: 'Learn TypeScript'
-    },
-    {
-        id: v4(),
-        filter: 'buy',
-        name: 'Buy ASICS Gel-Lyte III Afew Koi'
-    }
-]
+const tasks: any[] = [
+    { id: v4(), name: 'Acheter des Asics Koï pour avoir une meilleure note' },
+    { id: v4(), name: 'Learn React' },
+    { id: v4(), name: 'Learn TypeScript' },
+    { id: v4(), name: 'Learn PHP' },
+];
 
 function App() {
     const [text, setText] = useState('');
-    const [column, setColumn] = useState('');
-
-    const [state, setState] = useState({
+    const [column, setColumn] = useState({
         "todo": {
-            title: "Todo",
-            items: [item[0], item[1]]
+            id: "todo",
+            title: "To Do",
+            tasks: [tasks[0]]
         },
         "inProgress": {
+            id: "inProgress",
             title: "In Progress",
-            items: [item[2]]
+            tasks: [tasks[1], tasks[2]]
         },
         "done": {
-            title: "Completed",
-            items: []
+            id: "done",
+            title: "Done",
+            tasks: [tasks[3]]
         }
     });
 
-    // TODO: console.log(Object.keys(state));
-
-    const reorder = (list: any, startIndex: number, endIndex: number) => {
+    const reorder = (list: any[], startIndex: number, endIndex: number) => {
         const result = Array.from(list);
         const [removed] = result.splice(startIndex, 1);
         result.splice(endIndex, 0, removed);
-
         return result;
     }
 
     const handleDragEnd = ({ destination, source }: any) => {
-        console.log({ destination, source, state });
+        console.log({ destination, source, column });
 
         const sourceId = source.droppableId;
         const destinationId = destination.droppableId;
-        const newState: any = { ...state };
+        const newColumn: any = { ...column };
 
         if (!destination) {
             console.log('Destination is null');
@@ -67,75 +54,24 @@ function App() {
         }
 
         if (destination.index === source.index && destination.droppableId === source.droppableId) {
-            return
+            console.log('Destination is the same as source');
+            return;
         }
 
         if (sourceId === destinationId) {
-            const items = newState[sourceId].items;
-            const reorderedItems = reorder(items, source.index, destination.index);
-            newState[sourceId].items = reorderedItems;
+            const tasks = newColumn[sourceId].tasks;
+            const reorderedTasks = reorder(tasks, source.index, destination.index);
+            newColumn[sourceId].tasks = reorderedTasks;
         } else {
-            const item = newState[sourceId].items[source.index];
-            newState[sourceId].items.splice(source.index, 1);
-            newState[destinationId].items.splice(destination.index, 0, item);
+            const task = newColumn[sourceId].tasks[source.index];
+            newColumn[sourceId].tasks.splice(source.index, 1);
+            newColumn[destinationId].tasks.splice(destination.index, 0, task);
         }
 
-        setState(newState);
+        setColumn(newColumn);
     }
 
-    const addItem = () => {
-        Swal.fire({
-            title: 'Ajout d\'un item',
-            input: 'text',
-            inputValue: text,
-            inputPlaceholder: 'Votre futur item',
-            showCancelButton: true,
-        }).then((result: any) => {
-            if (result.value) {
-                const newItem = { id: v4(), name: result.value };
-                const newState = { ...state };
-                newState['todo'].items.push(newItem);
-                setState(newState);
-                setText('');
-            }
-        })
-    }
-
-    const editItem = (id: string, name: string) => {
-        console.log("Edited item with id: " + id);
-
-        Swal.fire({
-            title: 'Edit item',
-            input: 'text',
-            inputValue: name,
-            confirmButtonText: 'Edit',
-            showLoaderOnConfirm: true,
-            showCancelButton: true,
-
-            preConfirm: (value: string) => {
-                const newState = { ...state };
-                const newTodoItems = newState['todo'].items.map((item: any) => {
-                    if (item.id === id) {
-                        item.name = value;
-                    }
-                    return item;
-                });
-                newState['todo'].items = newTodoItems;
-                setState(newState);
-            }
-        });
-    }
-
-    const removeItem = (id: string) => {
-        console.log("Removed item with id: " + id);
-
-        const newState = { ...state };
-        const newTodoItems = newState['todo'].items.filter((item: any) => item.id !== id);
-        newState['todo'].items = newTodoItems;
-        setState(newState);
-    }
-
-    const addCol = () => {
+    const addColumn = () => {
         Swal.fire({
             title: 'Ajout d\'un colonne',
             input: 'text',
@@ -144,30 +80,82 @@ function App() {
             showCancelButton: true,
         }).then((result: any) => {
             if (result.value) {
-                setState({
-                    ...state,
+                setColumn({
+                    ...column,
                     [result.value]: {
                         title: result.value,
-                        items: []
+                        tasks: []
                     }
                 });
             }
         })
     }
 
+    const addTask = () => {
+        Swal.fire({
+            title: 'Ajout d\'un task',
+            input: 'text',
+            inputValue: text,
+            inputPlaceholder: 'Votre futur task',
+            showCancelButton: true,
+        }).then((result: any) => {
+            if (result.value) {
+                const newTask = { id: v4(), name: result.value };
+                const newColumn = { ...column };
+                newColumn['todo'].tasks.push(newTask);
+                setColumn(newColumn);
+                setText('');
+            }
+        })
+    }
+
+    const editTask = (id: string, name: string) => {
+        Swal.fire({
+            title: 'Édition de la tâche',
+            input: 'text',
+            inputValue: name,
+            inputPlaceholder: name,
+            showCancelButton: true,
+        }).then((result: any) => {
+            if (result.value) {
+                const newColumn: Record<string, any> = { ...column };
+                for (const key in newColumn) {
+                    for (const task of newColumn[key].tasks) {
+                        if (task.id === id) {
+                            task.name = result.value;
+                        }
+                    }
+                }
+                // TODO : RÉSOUDRE -> setColumn(newColumn);
+            }
+        })
+    }
+
+    const removeTask = (id: string) => {
+        const newColumn = { ...column };
+        const newTodoTasks = newColumn['todo'].tasks.filter((task: any) => task.id !== id);
+        newColumn['todo'].tasks = newTodoTasks;
+        setColumn(newColumn);
+    }
+
+    // TODO: Move task to the selected column
     const moveTo = (id: string): void => {
         Swal.fire({
-            title: 'Move item to',
+            title: 'Move task to',
             input: 'select',
-            inputOptions: Object.keys(state),
+            inputOptions: Object.keys(column),
             inputPlaceholder: 'Votre future colonne',
             showCancelButton: true,
         })
-            .then((result: any) => {
-                if (result.value) {
-                    // TODO
-                }
-            });
+        .then((result: any) => {
+            if (result.value) {
+                /* const newColumn = { ...column };
+                const newTodoTasks = newColumn['todo'].tasks.filter((task: any) => task.id !== id);
+                newColumn['todo'].tasks = newTodoTasks;
+                newColumn[result.value].tasks.push(newColumn['todo'].tasks.find((task: any) => task.id === id));
+                setColumn(newColumn); */
+            }
+        })
     }
 
     return (
@@ -175,20 +163,19 @@ function App() {
 
             {/* ============= BOUTONS AJOUT ============= */}
             <div>
-                <div className="btnAdd">
-                    <button className="btn btn-primary me-5" onClick={addItem}>Ajouter un item</button>
-                    <button className="btn btn-primary" onClick={addCol}>Ajouter une colonne</button>
+                <div className="boutons btnAdd">
+                    <button className="btn btn-primary me-5" onClick={addTask}>Ajouter un task</button>
+                    <button className="btn btn-primary" onClick={addColumn}>Ajouter une colonne</button>
                 </div>
             </div>
 
             {/* ============= FILTRE ============= */}
             <div>
-                <div className="btnFilter">
-                    <select className="form-control" onChange={(e: any) => setColumn(e.target.value)}>
+                <div className="boutons btnFilter">
+                    <h3 className='text-decoration-underline text-black'>Filtre :</h3>
+                    <select className="form-select" onChange={(e: any) => setColumn(e.target.value)}>
                         <option value="">Tous</option>
-                        {/* {Object.keys(state).map((key: string) => {
-                            return <option key={key} value={key}>{state[key].title}</option>
-                        })} */}
+                        {/* TODO */}
                     </select>
                 </div>
             </div>
@@ -196,7 +183,7 @@ function App() {
             {/* ============= DRAG N DROP ============= */}
             <div id="drop">
                 <DragDropContext onDragEnd={handleDragEnd}>
-                    {_.map(state, (data, key) => {
+                    {_.map(column, (data, key) => {
                         return (
                             <div key={key} className={"column"}>
                                 <h2>{data.title}</h2>
@@ -205,14 +192,14 @@ function App() {
                                     {(provided) => {
                                         return (
                                             <div ref={provided.innerRef}{...provided.droppableProps} className={"droppable-col"}>
-                                                {data.items.map((el, index) => {
+                                                {data.tasks.map((el: any, index: number) => {
                                                     return (
                                                         <Draggable key={el.id} index={index} draggableId={el.id}>
                                                             {(provided) => {
                                                                 return (
-                                                                    <div ref={provided.innerRef}{...provided.draggableProps} className={"item"}>
+                                                                    <div ref={provided.innerRef}{...provided.draggableProps} className={"task"}>
                                                                         <span {...provided.dragHandleProps} className={"drag-handle"}>
-                                                                            <Cards el={el} editItem={editItem} removeItem={removeItem} moveTo={moveTo} />
+                                                                            <Cards el={el} editTask={editTask} removeTask={removeTask} moveTo={moveTo} />
                                                                         </span>
                                                                     </div>
                                                                 )

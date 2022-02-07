@@ -10,21 +10,21 @@ interface CardElement {
 
 interface CardInterface {
     el: CardElement,
-    editItem(id: string, name: string): void,
-    removeItem(id: string): void,
+    editTask(id: string, name: string): void,
+    removeTask(id: string): void,
     moveTo(id: string, column: string): void
 }
 
-const Cards = ({el, editItem, removeItem, moveTo}: CardInterface) => {
+const Cards = ({el, editTask, removeTask, moveTo}: CardInterface) => {
     return <>
         <Card className="text-center">
             <Card.Body>
                 <Card.Title>{el.name}</Card.Title>
 
-                <Card.Subtitle className="filter mb-2 text-muted">{el.filter}</Card.Subtitle>
+                {/* <Card.Subtitle className="filter mb-2 text-muted">{el.filter}</Card.Subtitle> */}
 
                 <div className="d-flex justify-content-around">
-                    <button className="btn btn-primary" onClick={()=> editItem(el.id, el.name)}>
+                    <button className="btn btn-primary" onClick={()=> editTask(el.id, el.name)}>
                         <BiEdit /> Éditer
                     </button>
 
@@ -32,7 +32,7 @@ const Cards = ({el, editItem, removeItem, moveTo}: CardInterface) => {
                         <BiEdit /> Déplacer
                     </button>
                     
-                    <button className="btn btn-danger" onClick={()=> removeItem(el.id)}>
+                    <button className="btn btn-danger" onClick={()=> removeTask(el.id)}>
                         <BiTrash /> Supprimer
                     </button>
                 </div>
