@@ -153,18 +153,33 @@ function App() {
     }
 
     const removeTask = (id: string) => {
-        const newColumn: ColumnState = { ...column };
-        for (const key in newColumn) {
-            for (const task of newColumn[key as keyof ColumnState].tasks) {
-                if (task.id === id) {
-                    newColumn[key as keyof ColumnState].tasks.splice(
-                        newColumn[key as keyof ColumnState].tasks.indexOf(task),
-                        1
-                    );
+        Swal.fire({
+            title: 'Suppression de la tâche',
+            text: 'Êtes-vous sûr de vouloir supprimer cette tâche ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, supprimer !',
+            cancelButtonText: 'Non, annuler'
+        })
+        .then((result: any) => {
+            if (result.value) {
+                const newColumn: ColumnState = { ...column };
+
+                for (const key in newColumn) {
+                    for (const task of newColumn[key as keyof ColumnState].tasks) {
+                        if (task.id === id) {
+                            newColumn[key as keyof ColumnState].tasks.splice(
+                                newColumn[key as keyof ColumnState].tasks.indexOf(task), 1
+                            );
+                        }
+                    }
                 }
+                setColumn(newColumn);
             }
-        }
-        setColumn(newColumn);
+        })
+            
     };
 
     // TODO
@@ -179,6 +194,7 @@ function App() {
         .then((result: any) => {
             if (result.value) {
                 const newColumn: ColumnState = { ...column };
+                
                 for (const key in newColumn) {
                     for (const task of newColumn[key as keyof ColumnState].tasks) {
                         if (task.id === id) {
@@ -219,7 +235,7 @@ function App() {
             {/* ============= FILTRE ============= */}
             <div>
                 <div className="boutons btnFilter">
-                    <h3 className='text-decoration-underline text-black'>Filtre :</h3>
+                    <h3 className='text-decoration-underline'>Filtre :</h3>
                     <select className="form-select" onChange={(e: any) => selectFilter(e.target.value)}>
                         <option value="all">Tous</option>
                         <option value="todo">Todo</option>
