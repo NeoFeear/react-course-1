@@ -111,10 +111,10 @@ function App() {
 
     const addTask = () => {
         Swal.fire({
-            title: 'Ajout d\'un task',
+            title: 'Ajout d\'une tâche',
             input: 'text',
             inputValue: text,
-            inputPlaceholder: 'Votre futur task',
+            inputPlaceholder: 'Votre future tâche',
             showCancelButton: true,
         }).then((result: any) => {
             if (result.value) {
@@ -185,7 +185,7 @@ function App() {
     // TODO
     const moveTo = (id: string): void => {
         Swal.fire({
-            title: 'Move task to',
+            title: 'Déplacer vers',
             input: 'select',
             inputOptions: Object.keys(column),
             inputPlaceholder: 'Votre future colonne',
